@@ -41,8 +41,9 @@ let rgbToSRgb (rgbColor:RgbColor) =
     sRgb
 
 let findColorFactor (colorRatio) = 
-    if colorRatio <= 0.03928 then (colorRatio/12.92) 
-    else (((colorRatio + 0.055)/1.055)**2.4)
+    match colorRatio <= 0.03928 with 
+    | true -> colorRatio/12.92
+    | false -> ((colorRatio + 0.055)/1.055)**2.4
 
 let sRgbToColorFactor (sRgbColor) = 
     let colorFactor = {
