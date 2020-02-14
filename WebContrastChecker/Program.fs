@@ -83,13 +83,23 @@ let calculateContrast (firstColor:RgbColor) (secondColor:RgbColor) =
     (highestLuminance + 0.05)/(lowestLuminance + 0.05) 
 
 [<EntryPoint>]
-let main argv =
-    if argv.Length <> 2 then
-        printfn "Invalid number of arguments. 2 required"
-        1
-    else 
-        let firstColor = hexStringToRgb argv.[0]
-        let secondColor = hexStringToRgb argv.[1]
-        let contrastRatio = calculateContrast firstColor secondColor
+let main argv = 
+    match argv.Length with 
+    | 0 -> 
+        printfn "Calculates contrast ratio or relative luminance.\n" 
+        printfn "Takes either one or two hex strings as arguments (without #.)\n"
+        0
+    | 1 ->
+        let rL = 
+            argv.[0]
+            |> hexStringToRgb
+            |> calculateRelativeLuminance
+        printfn "Relative luminance: %f" rL
+        0
+    | 2 -> 
+        let contrastRatio = calculateContrast (hexStringToRgb argv.[0]) (hexStringToRgb argv.[1])  
         printfn "Contrast ratio: %f" contrastRatio
         0
+    | _ -> 
+        printfn "Wrong number of arguments. One or two required."
+        1
