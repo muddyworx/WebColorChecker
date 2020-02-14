@@ -1,5 +1,7 @@
 ﻿open System
 
+type HexString = HexString of string
+
 type RgbColor = {
     red : byte
     green : byte 
@@ -28,7 +30,7 @@ type FindGammaLuminance = RgbGamma -> double
 
 type FindRelativeLuminance = RgbColor -> double
 
-type HexStringToRgb = string -> RgbColor
+type HexStringToRgb = HexString -> RgbColor
 
 type FindContrast = RgbColor -> RgbColor -> double
 
@@ -65,7 +67,7 @@ let FindRelativeLuminance (rgbColor) =
     relativeLuminance
 
 // TODO: this function could throw exceptions.
-let HexStringToRgb (hexColor:string) = 
+let HexStringToRgb (HexString hexColor) = 
     let hexToByte (s:string) = 
         System.Convert.ToByte(s, 16)
 
