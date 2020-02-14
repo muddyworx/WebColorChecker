@@ -75,12 +75,12 @@ let hexStringToRgb (hexColor:string) =
         }
     rgbColor
 
-let calculateContrast (firstColor:RgbColor) (secondColor:RgbColor) = 
-    let firstLuminance = calculateRelativeLuminance firstColor
-    let secondLuminance = calculateRelativeLuminance secondColor
-    let lowestLuminance = min firstLuminance secondLuminance
-    let highestLuminance = max firstLuminance secondLuminance
-    (highestLuminance + 0.05)/(lowestLuminance + 0.05) 
+let calculateContrast (c1:RgbColor) (c2:RgbColor) = 
+    let l1 = calculateRelativeLuminance c1
+    let l2 = calculateRelativeLuminance c2
+    let lmin = min l1 l2
+    let lmax = max l1 l2
+    (lmax + 0.05)/(lmin + 0.05) 
 
 [<EntryPoint>]
 let main argv = 
