@@ -6,65 +6,66 @@ type RgbColor = {
     blue : byte
     }
 
-type SRgbColor = {
+type NormalizedRgb = {
     red : double
     green : double
     blue : double
     }
 
-type ColorFactor = {
+type RgbGamma = {
     red : double
     green : double
     blue : double
     }
 
-type rgbToSRgb = RgbColor -> SRgbColor
+type NormalizeRgb = RgbColor -> NormalizedRgb
 
-type findColorFactor = double -> double
+type FindChannelGamma = double -> double
 
-type sRgbToColorFactor = SRgbColor-> ColorFactor
+type FindRgbGamma = NormalizedRgb-> RgbGamma
 
-type colorFactorToRelativeLuminance = ColorFactor -> double
+type FindGammaLuminance = RgbGamma -> double
 
-type calculateRelativeLuminance = RgbColor -> double
+type FindRelativeLuminance = RgbColor -> double
 
-type hexStringToRgb = string -> RgbColor
+type HexStringToRgb = string -> RgbColor
 
-type calculateContrast = RgbColor -> RgbColor -> double
+type FindContrast = RgbColor -> RgbColor -> double
 
-let rgbToSRgb (rgbColor:RgbColor) = 
-    let sRgb = {
+let NormalizeRgb (rgbColor:RgbColor) = 
+    let normalizedRgb = {
         red = (double rgbColor.red)/255.0
         green = (double rgbColor.green)/255.0 
         blue = (double rgbColor.blue)/255.0
         }
-    sRgb
+    normalizedRgb
 
-let findColorFactor (colorRatio) = 
-    match colorRatio <= 0.03928 with 
-    | true -> colorRatio/12.92
-    | false -> ((colorRatio + 0.055)/1.055)**2.4
+let FindChannelGamma (normalizedChannel) = 
+    match normalizedChannel <= 0.03928 with 
+    | true -> normalizedChannel/12.92
+    | false -> ((normalizedChannel + 0.055)/1.055)**2.4
 
-let sRgbToColorFactor (sRgbColor) = 
-    let colorFactor = {
-        red = findColorFactor sRgbColor.red
-        green = findColorFactor sRgbColor.green
-        blue = findColorFactor sRgbColor.blue
-    }
-    colorFactor
+let FindRgbGamma (normalizedRgb) = 
+    let rgbGamma = {
+        red = FindChannelGamma normalizedRgb.red
+        green = FindChannelGamma normalizedRgb.green
+        blue = FindChannelGamma normalizedRgb.blue
+        }
+    rgbGamma
 
-let colorFactorToRelativeLuminance (colorFactor) = 
-    (0.2126 * colorFactor.red) + (0.7152 * colorFactor.green) + (0.0722 * colorFactor.blue)
+let FindGammaLuminance (colorGamma) = 
+    (0.2126 * colorGamma.red) + (0.7152 * colorGamma.green) + (0.0722 * colorGamma.blue)
 
-let calculateRelativeLuminance (rgbColor) = 
+let FindRelativeLuminance (rgbColor) = 
     let relativeLuminance =  
         rgbColor 
-        |> rgbToSRgb
-        |> sRgbToColorFactor
-        |> colorFactorToRelativeLuminance
+        |> NormalizeRgb
+        |> FindRgbGamma
+        |> FindGammaLuminance
     relativeLuminance
 
-let hexStringToRgb (hexColor:string) = 
+// TODO: this function could throw exceptions.
+let HexStringToRgb (hexColor:string) = 
     let hexToByte (s:string) = 
         System.Convert.ToByte(s, 16)
 
@@ -75,9 +76,9 @@ let hexStringToRgb (hexColor:string) =
         }
     rgbColor
 
-let calculateContrast (c1:RgbColor) (c2:RgbColor) = 
-    let l1 = calculateRelativeLuminance c1
-    let l2 = calculateRelativeLuminance c2
+let FindContrast (c1:RgbColor) (c2:RgbColor) = 
+    let l1 = FindRelativeLuminance c1
+    let l2 = FindRelativeLuminance c2
     let lmin = min l1 l2
     let lmax = max l1 l2
     (lmax + 0.05)/(lmin + 0.05) 
@@ -92,12 +93,12 @@ let main argv =
     | 1 ->
         let rL = 
             argv.[0]
-            |> hexStringToRgb
-            |> calculateRelativeLuminance
+            |> HexStringToRgb
+            |> FindRelativeLuminance
         printfn "Relative luminance: %f" rL
         0
     | 2 -> 
-        let contrastRatio = calculateContrast (hexStringToRgb argv.[0]) (hexStringToRgb argv.[1])  
+        let contrastRatio = FindContrast (HexStringToRgb argv.[0]) (HexStringToRgb argv.[1])  
         printfn "Contrast ratio: %f" contrastRatio
         0
     | _ -> 
