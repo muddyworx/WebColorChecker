@@ -19,21 +19,21 @@ type RelativeLuminance = RelativeLuminance of double
 type ContrastRatio = ContrastRatio of double
 
 type RgbColor = {
-    red : RgbChannel
-    green : RgbChannel
-    blue : RgbChannel
+    RedChannel : RgbChannel
+    GreenChannel : RgbChannel
+    BlueChannel : RgbChannel
     }
 
 type NormalizedRgb = {
-    red : NormalizedChannel
-    green : NormalizedChannel
-    blue : NormalizedChannel
+    NormalRed : NormalizedChannel
+    NormalGreen : NormalizedChannel
+    NormalBlue : NormalizedChannel
     }
 
 type RgbGamma = {
-    red : ChannelGamma
-    green : ChannelGamma
-    blue : ChannelGamma
+    RedGamma : ChannelGamma
+    GreenGamma : ChannelGamma
+    BlueGamma : ChannelGamma
     }
 
 type NormalizeRgb = RgbColor -> NormalizedRgb
@@ -52,14 +52,14 @@ type FindContrast = RgbColor -> RgbColor -> ContrastRatio
 
 let NormalizeRgb (rgbColor:RgbColor) = 
     let {
-        RgbColor.red = (RgbChannel redChannel)
-        RgbColor.green = (RgbChannel greenChannel)
-        RgbColor.blue = (RgbChannel blueChannel)
+        RedChannel = (RgbChannel redChannel)
+        GreenChannel = (RgbChannel greenChannel)
+        BlueChannel = (RgbChannel blueChannel)
         } = rgbColor
     let normalizedRgb = {
-        NormalizedRgb.red = NormalizedChannel (double redChannel/255.0)
-        NormalizedRgb.green = NormalizedChannel (double greenChannel/255.0)
-        NormalizedRgb.blue = NormalizedChannel (double blueChannel/255.0)
+        NormalRed = NormalizedChannel (double redChannel/255.0)
+        NormalGreen = NormalizedChannel (double greenChannel/255.0)
+        NormalBlue = NormalizedChannel (double blueChannel/255.0)
         }
     normalizedRgb
 
@@ -70,17 +70,17 @@ let FindChannelGamma (NormalizedChannel n) =
 
 let FindRgbGamma (normalizedRgb:NormalizedRgb) = 
     let rgbGamma = {
-        RgbGamma.red = FindChannelGamma normalizedRgb.red
-        RgbGamma.green = FindChannelGamma normalizedRgb.green
-        RgbGamma.blue = FindChannelGamma normalizedRgb.blue
+        RedGamma = FindChannelGamma normalizedRgb.NormalRed
+        GreenGamma = FindChannelGamma normalizedRgb.NormalGreen
+        BlueGamma = FindChannelGamma normalizedRgb.NormalBlue
         }
     rgbGamma
 
 let FindRelativeLuminance (colorGamma:RgbGamma) = 
     let {
-        RgbGamma.red = (ChannelGamma redGamma)
-        RgbGamma.green = (ChannelGamma greenGamma)
-        RgbGamma.blue = (ChannelGamma blueGamma)} = colorGamma
+        RedGamma = (ChannelGamma redGamma)
+        GreenGamma = (ChannelGamma greenGamma)
+        BlueGamma = (ChannelGamma blueGamma)} = colorGamma
     RelativeLuminance ((0.2126 * redGamma) + (0.7152 * greenGamma) + (0.0722 * blueGamma))
 
 let FindRgbRelativeLuminance (rgbColor) = 
@@ -97,9 +97,9 @@ let HexStringToRgb (HexString hexColor) =
         System.Convert.ToByte(s, 16)
 
     let rgbColor = {
-        RgbColor.red = RgbChannel (hexToByte (hexColor.[0..1]))
-        RgbColor.green = RgbChannel (hexToByte (hexColor.[2..3]))
-        RgbColor.blue = RgbChannel (hexToByte (hexColor.[4..5]))
+        RedChannel = RgbChannel (hexToByte (hexColor.[0..1]))
+        GreenChannel = RgbChannel (hexToByte (hexColor.[2..3]))
+        BlueChannel = RgbChannel (hexToByte (hexColor.[4..5]))
         }
     rgbColor
 
