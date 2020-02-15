@@ -1,21 +1,21 @@
 ﻿open System
 
-// 000000 to FFFFFF Hexadecimal string
+// Constrained: 000000 to FFFFFF Hexadecimal string
 type HexString = HexString of string
 
-// 0 to 255 byte
+// Constrained: 0 to 255 byte
 type RgbChannel = RgbChannel of byte
 
-// 0.0 to 1.0
+// Constrained: 0.0 to 1.0
 type NormalizedChannel = NormalizedChannel of double
 
-// 0.0 to 1.0
+// Constrained: 0.0 to 1.0
 type ChannelGamma = ChannelGamma of double
 
-// 0.0 to 1.0
+// Constrained: 0.0 to 1.0
 type RelativeLuminance = RelativeLuminance of double
 
-// 1 to 21
+// Constrained: 1 to 21
 type ContrastRatio = ContrastRatio of double
 
 type RgbColor = {
@@ -50,7 +50,7 @@ type HexStringToRgb = HexString -> RgbColor
 
 type FindContrast = RgbColor -> RgbColor -> ContrastRatio
 
-let NormalizeRgb (rgbColor:RgbColor) = 
+let NormalizeRgb rgbColor = 
     let {
         RedChannel = (RgbChannel redChannel)
         GreenChannel = (RgbChannel greenChannel)
@@ -68,7 +68,7 @@ let FindChannelGamma (NormalizedChannel n) =
     | true -> ChannelGamma (n/12.92)
     | false -> ChannelGamma (((n + 0.055)/1.055)**2.4)
 
-let FindRgbGamma (normalizedRgb:NormalizedRgb) = 
+let FindRgbGamma normalizedRgb = 
     let rgbGamma = {
         RedGamma = FindChannelGamma normalizedRgb.NormalRed
         GreenGamma = FindChannelGamma normalizedRgb.NormalGreen
@@ -76,14 +76,14 @@ let FindRgbGamma (normalizedRgb:NormalizedRgb) =
         }
     rgbGamma
 
-let FindRelativeLuminance (colorGamma:RgbGamma) = 
+let FindRelativeLuminance colorGamma = 
     let {
         RedGamma = (ChannelGamma redGamma)
         GreenGamma = (ChannelGamma greenGamma)
         BlueGamma = (ChannelGamma blueGamma)} = colorGamma
     RelativeLuminance ((0.2126 * redGamma) + (0.7152 * greenGamma) + (0.0722 * blueGamma))
 
-let FindRgbRelativeLuminance (rgbColor) = 
+let FindRgbRelativeLuminance rgbColor = 
     let relativeLuminance =  
         rgbColor 
         |> NormalizeRgb
@@ -91,9 +91,9 @@ let FindRgbRelativeLuminance (rgbColor) =
         |> FindRelativeLuminance
     relativeLuminance
 
-// TODO: this function could throw exceptions.
+// TODO: this function could throw exceptions. Use result type
 let HexStringToRgb (HexString hexColor) = 
-    let hexToByte (s:string) = 
+    let hexToByte s = 
         System.Convert.ToByte(s, 16)
 
     let rgbColor = {
@@ -103,7 +103,7 @@ let HexStringToRgb (HexString hexColor) =
         }
     rgbColor
 
-let FindContrast (c1:RgbColor) (c2:RgbColor) = 
+let FindContrast c1 c2 = 
     let (RelativeLuminance l1) = FindRgbRelativeLuminance c1
     let (RelativeLuminance l2) = FindRgbRelativeLuminance c2
     let lmin = min l1 l2
