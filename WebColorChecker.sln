@@ -1,7 +1,7 @@
 
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "WebContrastChecker", "WebContrastChecker\WebContrastChecker.fsproj", "{2509B50F-0989-4267-B5E9-456D20D01BE4}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "WebColorChecker", "WebContrastChecker\WebColorChecker.fsproj", "{2509B50F-0989-4267-B5E9-456D20D01BE4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
