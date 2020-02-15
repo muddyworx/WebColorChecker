@@ -1,15 +1,21 @@
 ﻿open System
 
+// 000000 to FFFFFF Hexadecimal string
 type HexString = HexString of string
 
+// 0 to 255 byte
 type RgbChannel = RgbChannel of byte
 
+// 0.0 to 1.0
 type NormalizedChannel = NormalizedChannel of double
 
+// 0.0 to 1.0
 type ChannelGamma = ChannelGamma of double
 
+// 0.0 to 1.0
 type RelativeLuminance = RelativeLuminance of double
 
+// 1 to 21
 type ContrastRatio = ContrastRatio of double
 
 type RgbColor = {
